@@ -1,0 +1,43 @@
+name: Check for QA Sign Off
+
+on:     
+  pull_request:
+    types: [unlabeled]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  approved_by_qa:
+    name: Approved by QA
+    runs-on: ubuntu-latest
+    outputs:
+      qa-approved: ${{ steps.approved-by-qa.outputs.RESULT }}
+    steps:
+      - id: remove-label
+        uses: actions-ecosystem/action-remove-labels@v1
+        if: ${{ (github.event.review.state == 'approved') && (github.triggering_actor == 'matt-smith-kr') }}
+        with:
+          labels: needs-qa
+      - id: approved-by-qa
+        run: echo "::set-output name=RESULT::passed"
+        if: ${{ (github.event.review.state == 'approved') && (github.triggering_actor == 'matt-smith-kr') }}
+  manual_override:
+    name: Label Removed by Developer
+    needs: approved_by_qa
+    runs-on: ubuntu-latest
+    outputs:
+      manually-approved: ${{ steps.manual-override.outputs.RESULT }}
+    steps:
+      - id: manual-override
+        run: | 
+          echo 'This has been approved by ${{ github.triggering_actor }}'
+          echo "::set-output name=RESULT::passed"
+        if: ${{ (github.event.action == 'unlabeled') && (github.event.label.name == 'needs-qa') }}
+  final_label_check:
+    name: QA Sign Off
+    needs: [approved_by_qa, manual_override]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check QA Sign Off
+        run: exit 1
+        if: ${{ (needs.approved_by_qa.outputs.qa-approved != 'passed') && (needs.manual_override.outputs.manually-approved != 'passed') }}
