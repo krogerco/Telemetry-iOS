@@ -1,0 +1,17 @@
+changelog:
+  exclude:
+    labels:
+    - ignore
+  categories:
+    - title: 🎉 Exciting New Features
+      labels:
+      - enhancement
+    - title: 🛠 Bug Fixes
+      labels:
+      - bug
+    - title: 📓 Documentation
+      labels:
+      - documentation
+    - title: 🔎 Misc Changes
+      labels:
+      - "*"

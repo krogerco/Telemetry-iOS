@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Gauntlet",
+        "repositoryURL": "https://github.com/krogerco/Gauntlet-iOS.git",
+        "state": {
+          "branch": null,
+          "revision": "f63fc764d4d6923bd0bfe5d95664f6b66775f271",
+          "version": "1.0.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
