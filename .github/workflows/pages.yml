@@ -1,0 +1,61 @@
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["docs-test"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: macos-12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build
+        run: |
+            xcodebuild -workspace Telemetry.xcworkspace \
+                -derivedDataPath docsData \
+                -scheme Telemetry \
+                -destination 'platform=iOS Simulator,name=iPhone 14' \
+                -parallelizeTargets docbuild
+
+            echo "Copying DocC archives to doc_archives..."
+            mkdir doc_archives
+            cp -R `find docsData -type d -name '*.doccarchive'` doc_archives
+
+            $(xcrun --find docc) process-archive transform-for-static-hosting \
+                doc_archives/Telemetry.doccarchive \
+                --hosting-base-path Telemetry-iOS \
+                --output-path docs
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Upload docs folder
+          path: 'docs'
+          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
