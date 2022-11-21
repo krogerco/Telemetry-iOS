@@ -4,7 +4,7 @@ name: Deploy static content to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["docs-test"]
+    branches: ["main"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -38,12 +38,10 @@ jobs:
                 -destination 'platform=iOS Simulator,name=iPhone 14' \
                 -parallelizeTargets docbuild
 
-            echo "Copying DocC archives to doc_archives..."
-            mkdir doc_archives
-            cp -R `find docsData -type d -name '*.doccarchive'` doc_archives
+            cp -R `find docsData -type d -name '*.doccarchive'` .
 
             $(xcrun --find docc) process-archive transform-for-static-hosting \
-                doc_archives/Telemetry.doccarchive \
+                Telemetry.doccarchive \
                 --hosting-base-path Telemetry-iOS \
                 --output-path docs
 
