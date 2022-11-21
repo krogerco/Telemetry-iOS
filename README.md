@@ -4,13 +4,13 @@ Telemetry is an easy-to-use unified pipeline for engineering logging and busines
 
 Applications and frameworks want to record data corresponding to both user initiated and internal events. Sometimes this is for engineering purposes (debugging and instrumentation) and sometimes this is for business analytics. In many cases, these events are overlapping. When the event happens, we want to collect engineering information AND business analytics.
 
-Telemetry makes it easy to define a single event to be recorded and interpreteted correctly as it arrives at different destinations. 
+Telemetry makes it easy to define a single event to be recorded and interpreted correctly as it arrives at different destinations. 
 
 Abstracting your engineering and analytics events into small, concise types yields clean call-sites and helps organize the code backing up the data reported for each event.
 
 ## Requirements
 
-- XCode 14.0+
+- Xcode 14.0+
 - Swift 5.5+
 
 ## Installation
@@ -21,7 +21,7 @@ The easiest way to install Telemetry is by adding a dependency via SPM.
         .package(
             name: "Telemetry",
             url: "https://github.com/krogerco/telemetry-ios.git",
-            .upToNextMajor(from: Version(2, 1, 0))
+            .upToNextMajor(from: Version(1, 0, 0))
         )
 ```
 
@@ -72,6 +72,7 @@ Gauntlet has full DocC documentation. After adding to your project, `Build Docum
 ### Online Documentation
 
 [Getting Started](Sources/Telemetry/Documentation.docc/GettingStarted.md)
+[Full Documentation](https://krogerco.github.io/Telemetry-iOS/documentation/telemetry)
 
 
 ## Communication
