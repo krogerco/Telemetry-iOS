@@ -13,10 +13,8 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-## 2.2.0
+## 1.0.0
 
 ### Added
 
-- `PublisherRelay` which exposes a Combine Publisher that you can subscribe to and receive a specified type.
- 
-## 2.1.0
+- Initial open source release.
