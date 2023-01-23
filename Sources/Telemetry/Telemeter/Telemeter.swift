@@ -27,7 +27,8 @@ public protocol Telemeter {
 
     /// Records a ``Metron`` along with the provided ``Facet``s to the receiving ``Telemeter``.
     ///
-    /// This function is intended only for internal Telemetry use. Users should prefer ``record(_:file:line:)`` when recording Metrons so that the File facet is appened.
+    /// This function is intended only for internal Telemetry use. Users should prefer ``record(_:file:line:)``
+    /// when recording Metrons so that the File facet is appened.
     ///
     /// - Parameters:
     ///   - metron: The `Metron` to record.
