@@ -22,7 +22,7 @@
 
 import Foundation
 
-/// Facet representing the source file and line the event originated in.
+/// Facet representing the source file and line the event originated from.
 public struct File: Facet, Equatable {
 
     /// File name.
