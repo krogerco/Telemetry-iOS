@@ -96,6 +96,24 @@ class TelemeterTests: XCTestCase {
             }
         }
     }
+
+    func testRecordAddsFileFacet() {
+        // Given
+        let expectedFileName = "TelemeterTests.swift"
+        let expectedLineNumber: UInt = #line + 3
+
+        // When
+        telemeter.record(SomeMetron())
+
+        // Then
+        XCTAssertEqual(telemeter.metroids.count, 1) {
+            let metroid = telemeter.metroids[0]
+            XCTAssertNotNil(metroid.facets.first(ofType: File.self)) { file in
+                XCTAssert(file.name, contains: expectedFileName)
+                XCTAssertEqual(file.line, expectedLineNumber)
+            }
+        }
+    }
 }
 
 private class MockRelay: Relay {

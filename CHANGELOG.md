@@ -11,6 +11,8 @@ All notable changes to this project will be documented in this file.
 
 ### Updated
 
+- Updated `record(metron:)` function to automatically append a File facet from where the function was called.
+
 ### Fixed
 
 ## 1.0.0

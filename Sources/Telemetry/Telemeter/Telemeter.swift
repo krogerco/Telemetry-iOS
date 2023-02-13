@@ -21,11 +21,14 @@
 // SOFTWARE.
 
 import Foundation
-import os
 
 /// A type that can record ``Metron``s.
 public protocol Telemeter {
+
     /// Records a ``Metron`` along with the provided ``Facet``s to the receiving ``Telemeter``.
+    ///
+    /// This function is intended only for internal Telemetry use. Users should prefer ``record(_:file:line:)``
+    /// when recording Metrons so that the File facet is appened.
     ///
     /// - Parameters:
     ///   - metron: The `Metron` to record.
@@ -36,11 +39,17 @@ public protocol Telemeter {
 // MARK: - Record Convenience
 
 extension Telemeter {
-    /// Records a ``Metron`` to the receiving ``Telemeter``.
+    /// Records a ``Metron`` to the receiving ``Telemeter`` and attaches a ``File`` facet.
     ///
     /// - Parameter metron: The `Metron` to record.
-    public func record(_ metron: Metron) {
-        record(metron, adding: [])
+    /// - Note: Automatically appends a ``File`` facet with the `fileID` and `line` the function was called from.
+    public func record(_ metron: Metron, file: StaticString = #fileID, line: UInt = #line) {
+        record(
+            metron,
+            adding: [
+                File(name: file, line: line)
+            ]
+        )
     }
 }
 
@@ -69,11 +78,10 @@ extension Telemeter {
         message: String,
         error: Error? = nil,
         significance: Significance = .debug,
-        file: StaticString = #fileID,
-        line: UInt = #line)
+        file: StaticString,
+        line: UInt)
     {
         var facets: [Facet] = [
-            File(name: file, line: line),
             significance
         ]
 
@@ -83,7 +91,7 @@ extension Telemeter {
 
         let metron = LogMetron(message: message, facets: facets)
 
-        record(metron)
+        record(metron, file: file, line: line)
     }
 }
 
