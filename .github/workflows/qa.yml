@@ -1,0 +1,18 @@
+name: Check for Sign Off
+
+on:     
+  pull_request:
+    types: [unlabeled]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  sign-off-check:
+    name: Check sign-off
+    runs-on: ubuntu-latest
+    steps:
+      - name: sign off
+        uses: krogerco/Sign-Off@update-path
+        with:
+          branch-name: sign-off
+          github-token: ${{ secrets.GITHUB_TOKEN }}
