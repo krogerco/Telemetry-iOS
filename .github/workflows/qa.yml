@@ -12,6 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: sign off
-        uses: krogerco/Sign-Off@v1.1.0
+        uses: krogerco/Sign-Off@vDCPEXP-76686-approver-remove-label
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
