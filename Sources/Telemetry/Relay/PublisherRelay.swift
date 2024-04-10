@@ -24,15 +24,17 @@ import Combine
 import Foundation
 
 /// A Relay that provides a Metron Combine publisher.
-public class PublisherRelay: Relay {
-
-    var internalPublisher = PassthroughSubject<any Metron, Never>()
+public struct PublisherRelay: Relay, @unchecked Sendable {
+    let lock = NSLock()
+    let internalPublisher = PassthroughSubject<any Metron, Never>()
 
     /// Creates a ``PublisherRelay``.
     public init() {}
 
     public func process(metroid: Metroid<Metron>) {
-        internalPublisher.send(metroid.value)
+        lock.withLock {
+            internalPublisher.send(metroid.value)
+        }
     }
 
     /// Publishes received metrons converted to the specified type, if possible
@@ -43,9 +45,11 @@ public class PublisherRelay: Relay {
     /// 
     /// - Note: Values are published on an unspecified queue.
     public func publisher<T>(of type: T.Type) -> AnyPublisher<T, Never> {
-        internalPublisher
-            .receive(on: DispatchQueue.global(qos: .userInteractive))
-            .compactMap { $0 as? T }
-            .eraseToAnyPublisher()
+        lock.withLock {
+            internalPublisher
+                .receive(on: DispatchQueue.global(qos: .userInteractive))
+                .compactMap { $0 as? T }
+                .eraseToAnyPublisher()
+        }
     }
 }

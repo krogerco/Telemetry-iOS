@@ -21,7 +21,7 @@
 // SOFTWARE.
 
 /// An event that can be recorded to a ``Telemeter``.
-public protocol Metron {
+public protocol Metron: Sendable {
 
     /// A message summarizing the event this metron represents.
     var message: String { get }

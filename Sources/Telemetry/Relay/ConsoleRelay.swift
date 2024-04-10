@@ -24,7 +24,7 @@ import Foundation
 
 /// Pre-built ``Relay`` for printing ``Metron``s to the console.
 /// By default, only logs metrons of informational, warning, exceptional, or internal error significance.
-public class ConsoleRelay: Relay {
+public struct ConsoleRelay: Relay, @unchecked Sendable {
 
     /// Date formatter used to format dates.
     public let dateFormatter: DateFormatter
@@ -45,7 +45,7 @@ public class ConsoleRelay: Relay {
     /// Creates a ``ConsoleRelay`` instance.
     ///
     /// - Parameter allowedSignificances: Array of significances used to filter output.
-    public convenience init(allowedSignificances: [Significance] = [.internalError, .error, .warning, .informational]) {
+    public init(allowedSignificances: [Significance] = [.internalError, .error, .warning, .informational]) {
         self.init(allowedSignificances: allowedSignificances, printer: defaultPrinter)
     }
 

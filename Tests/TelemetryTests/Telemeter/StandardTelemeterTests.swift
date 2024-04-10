@@ -38,12 +38,13 @@ class StandardTelemeterTestCase: XCTestCase {
 
         // Then
         waitFor(queue: telemeter.queue, timeout: 0.2)
-        XCTAssert(telemeter.relays.first?.value, is: RelayBox<MockRelay<Metron>>.self)
+        XCTAssert(telemeter.relays.first?.value, is: MockRelay<Metron>.self)
     }
 
     func testRecord() {
         // Given
-        let relay = MockRelay<Metron>()
+        let expect = expectation(description: "expect")
+        let relay = MockRelay<Metron>(expectation: expect)
         let telemeter = StandardTelemeter()
         let event = SomeMetron()
         let facet = TestFacet.other
@@ -54,47 +55,47 @@ class StandardTelemeterTestCase: XCTestCase {
         telemeter.record(event, adding: [facet])
 
         // Then
-        waitFor(queue: telemeter.queue, timeout: 0.2)
+        wait(for: [expect], timeout: 1.0)
 
         XCTAssertEqual(relay.labelOfQueueProcessWasCalledOn, telemeter.queue.label)
         XCTAssertEqual(relay.processedMetroids.first?.facets.first(ofType: TestFacet.self), facet)
     }
 
     func testThatRelayCanBeAdded() {
-
         // Given
-        let telemeter = StandardTelemeter()
         let relay = MockRelay<Metron>()
+        let telemeter = StandardTelemeter()
 
         // When
         telemeter.add(relay: relay)
         telemeter.add(relay: ConsoleRelay())
 
         // Then
-        waitFor(queue: telemeter.queue, timeout: 0.2)
-
         XCTAssertEqual(telemeter.relays.count, 2)
     }
 
     func testProcessingThatIsHandledByRelay() {
         // Given
+        let expect = expectation(description: "expect")
+        let relay = MockRelay<Metron>(expectation: expect)
         let telemeter = StandardTelemeter()
-        let relay = MockRelay<Metron>()
 
         // When
         telemeter.add(relay: relay)
         telemeter.record(MessageMetron(message: "A very important message."))
 
         // Then
-        waitFor(queue: telemeter.queue, timeout: 0.2)
+        wait(for: [expect], timeout: 1.0)
         XCTAssertEqual(relay.processedMetroids.count, 1)
     }
 
     func testThatMultipleRelaysCanProcessTheSameEvent() {
         // Given
+        let expect1 = expectation(description: "expect")
+        let expect2 = expectation(description: "expect")
         let telemeter = StandardTelemeter()
-        let firstRelay = MockRelay<MessageMetron>()
-        let secondRelay = MockRelay<Metron>()
+        let firstRelay = MockRelay<MessageMetron>(expectation: expect1)
+        let secondRelay = MockRelay<Metron>(expectation: expect2)
 
         // When
         telemeter.add(relay: firstRelay)
@@ -102,7 +103,7 @@ class StandardTelemeterTestCase: XCTestCase {
         telemeter.record(MessageMetron(message: "A very important message."))
 
         // Then
-        waitFor(queue: telemeter.queue, timeout: 0.2)
+        wait(for: [expect1, expect2], timeout: 1.0)
         XCTAssertEqual(firstRelay.processedMetroids.count, 1)
         XCTAssertEqual(secondRelay.processedMetroids.count, 1)
     }
@@ -127,8 +128,6 @@ class StandardTelemeterTestCase: XCTestCase {
         telemeter.add(relay: fourthRelay)
 
         // Then
-        waitFor(queue: telemeter.queue, timeout: 0.2)
-
         XCTAssertEqual(telemeter.relays.count, 4)
     }
 }
@@ -145,13 +144,19 @@ private struct MessageMetron: Metron, CustomStringConvertible {
     var description: String { message }
 }
 
-private class MockRelay<T>: Relay {
-
+private final class MockRelay<T>: Relay, @unchecked Sendable {
     private(set) var labelOfQueueProcessWasCalledOn: String?
     private(set) var processedMetroids: [Metroid<T>] = []
+
+    let expectation: XCTestExpectation?
+
+    init(expectation: XCTestExpectation? = nil) {
+        self.expectation = expectation
+    }
 
     func process(metroid: Metroid<T>) {
         labelOfQueueProcessWasCalledOn = DispatchQueue.currentQueueLabel
         processedMetroids.append(metroid)
+        expectation?.fulfill()
     }
 }

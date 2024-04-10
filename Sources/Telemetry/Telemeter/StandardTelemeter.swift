@@ -23,7 +23,7 @@
 import Foundation
 
 /// A ``Telemeter`` implementation which forwards metrons to ``Relay``s.
-open class StandardTelemeter: Telemeter {
+public final class StandardTelemeter: Telemeter, @unchecked Sendable {
 
     /// The application wide shared ``StandardTelemeter``.
     /// While singletons are generally avoided, it's important for there to
@@ -40,7 +40,8 @@ open class StandardTelemeter: Telemeter {
     /// The queue on which all relays will be called.
     public let queue = DispatchQueue(label: "com.kroger.telemetry.standardtelemeter")
 
-    var relays: [ObjectIdentifier: AnyRelay] = [:]
+    var relays: [ObjectIdentifier: any Relay] = [:]
+    let lock = NSLock()
 
     /// Creates a ``StandardTelemeter``.
     public init() {}
@@ -50,11 +51,16 @@ open class StandardTelemeter: Telemeter {
     /// - Parameters:
     ///   - relay: Relay to add.
     public func add<T>(relay: T) where T: Relay {
-        append(
-            relay: RelayBox(relay: relay),
-            identifier: ObjectIdentifier(T.self),
-            prettyName: String(describing: T.self)
-        )
+        lock.withLock {
+            let identifier = ObjectIdentifier(T.self)
+            guard relays.keys.contains(identifier) == false else {
+                let prettyName = String(describing: T.self)
+                assertionFailure("Cannot add another Relay with type \"\(prettyName)\".")
+                return
+            }
+
+            relays[identifier] = relay
+        }
     }
 
     /// Records a ``Metron`` along with the provided ``Facet``s.
@@ -63,28 +69,19 @@ open class StandardTelemeter: Telemeter {
     ///   - metron: The ``Metron`` to record.
     ///   - facets: Additional ``Facet``s to capture with the ``Metron``.
     public func record(_ metron: Metron, adding facets: [Facet]) {
-
         let date = Date()
 
-        queue.async {
-            self.relays.values.forEach { relay in
+        queue.async { [lock] in
+            // Take a snapshot of the current set of relays.
+            var relays: [any Relay] = []
+            lock.withLock {
+                relays = Array(self.relays.values)
+            }
+
+            relays.forEach { relay in
                 relay.process(metron: metron, with: facets, dateRecorded: date)
             }
         }
-    }
-
-    func append<T: AnyRelay>(relay: T, identifier: ObjectIdentifier, prettyName: String) {
-
-        queue.async {
-
-            guard self.relays.keys.contains(identifier) == false else {
-                assertionFailure("Cannot add another Relay with type \"\(prettyName)\".")
-                return
-            }
-
-            self.relays[identifier] = relay
-        }
-
     }
 }
 

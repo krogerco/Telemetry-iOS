@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.10
 
 import PackageDescription
 
@@ -15,11 +15,7 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(
-            name: "Gauntlet",
-            url: "https://github.com/krogerco/Gauntlet-iOS.git",
-            .upToNextMajor(from: Version(1, 0, 0))
-        )
+        .package(url: "https://github.com/krogerco/Gauntlet-iOS.git", from: "1.0.0")
     ],
     targets: [
         .target(
@@ -27,7 +23,10 @@ let package = Package(
         ),
         .testTarget(
             name: "TelemetryTests",
-            dependencies: ["Telemetry", "Gauntlet"]
+            dependencies: [
+                "Telemetry",
+                .product(name: "Gauntlet", package: "Gauntlet-iOS")
+            ]
         )
     ]
 )
