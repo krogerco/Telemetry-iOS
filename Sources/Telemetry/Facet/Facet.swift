@@ -25,7 +25,7 @@ import Foundation
 /// A  piece of metadata that is attached to a ``Metron``.
 ///
 /// A ``Facet`` may be provided by the ``Metron`` itself, or may be attached to a ``Metron`` at the time of recording.
-public protocol Facet {}
+public protocol Facet: Sendable {}
 
 // MARK: - Facet Type Lookup
 

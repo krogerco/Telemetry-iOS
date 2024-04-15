@@ -23,7 +23,7 @@
 import Foundation
 
 /// A type that receives ``Metron``s from a telemeter and relays them to a destination, such as the debug console or a web service.
-public protocol Relay {
+public protocol Relay: Sendable {
 
     /// The ``Metron`` type this relay can process. Use ``Metron`` to receive all metrons.
     associatedtype MetronType
@@ -37,4 +37,22 @@ public protocol Relay {
     ///
     /// - Parameter metroid: A metroid containing the original metron that was recorded along with additional metadata.
     func process(metroid: Metroid<MetronType>)
+}
+
+extension Relay {
+    func process(metron: Metron, with additionalFacets: [Facet], dateRecorded: Date) {
+
+        guard let value = metron as? MetronType else {
+            return
+        }
+
+        let metroid = Metroid<MetronType>(
+            metron: metron,
+            value: value,
+            additionalFacets: additionalFacets,
+            timestamp: dateRecorded
+        )
+
+        process(metroid: metroid)
+    }
 }

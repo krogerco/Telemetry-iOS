@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 `Telemetry` adheres to [Semantic Versioning](https://semver.org/).
 
-## main
+## 1.1.0
 
 ### Added
 
@@ -12,6 +12,8 @@ All notable changes to this project will be documented in this file.
 ### Updated
 
 - Updated `record(metron:)` function to automatically append a File facet from where the function was called.
+- Updated code to have proper Sendable conformance.
+- Updated package to Swift 5.10.
 
 ### Fixed
 

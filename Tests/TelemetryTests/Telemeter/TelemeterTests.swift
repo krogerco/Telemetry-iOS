@@ -116,15 +116,19 @@ class TelemeterTests: XCTestCase {
     }
 }
 
-private class MockRelay: Relay {
+private class MockRelay: Relay, @unchecked Sendable {
 
     private(set) var processedMetroid: Metroid<Metron>?
-    var expect: XCTestExpectation?
+    var expectation: XCTestExpectation?
+
+    init(expectation: XCTestExpectation? = nil) {
+        self.expectation = expectation
+    }
 
     func process(metroid: Metroid<Metron>) {
         processedMetroid = metroid
         DispatchQueue.main.async {
-            self.expect?.fulfill()
+            self.expectation?.fulfill()
         }
     }
 }

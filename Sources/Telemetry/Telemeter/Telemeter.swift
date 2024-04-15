@@ -23,7 +23,7 @@
 import Foundation
 
 /// A type that can record ``Metron``s.
-public protocol Telemeter {
+public protocol Telemeter: Sendable {
 
     /// Records a ``Metron`` along with the provided ``Facet``s to the receiving ``Telemeter``.
     ///

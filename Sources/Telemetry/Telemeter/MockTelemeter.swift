@@ -24,7 +24,8 @@ import Foundation
 
 /// A telemeter that holds on to all metrons recorded to it. This is intended for use in Unit Tests so that Telemetry records that occur
 /// in code being tested can be validated as part of the tests.
-public class MockTelemeter: Telemeter {
+public final class MockTelemeter: Telemeter, @unchecked Sendable {
+    private let lock = NSRecursiveLock()
 
     /// All ``Metron``s that have been recorded to this telemeter.
     public var metrons: [Metron] { metroids.map { $0.value } }
@@ -44,8 +45,6 @@ public class MockTelemeter: Telemeter {
 
     // The storage for the locked `metroids` property. This should not be accessed directly.
     private var _metroids: [Metroid<Metron>] = []
-
-    private let lock = NSRecursiveLock()
 
     /// Creates a ``MockTelemeter`` instance.
     public init() { }
