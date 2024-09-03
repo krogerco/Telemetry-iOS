@@ -40,7 +40,7 @@ public struct Metroid<T> {
     /// Convenience getter for the metron's significance.
     public let significance: Significance
 
-    init(metron: Metron, value: T, additionalFacets: [Facet], timestamp: Date) {
+    public init(metron: Metron, value: T, additionalFacets: [Facet], timestamp: Date) {
 
         self.value = value
         self.timestamp = timestamp

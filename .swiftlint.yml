@@ -6,7 +6,6 @@ disabled_rules: # rule identifiers to exclude from running
   - todo
 
 opt_in_rules: # some rules are only opt-in
-  - anyobject_protocol
   - array_init
   - attributes
   - closure_end_indentation
@@ -47,8 +46,10 @@ opt_in_rules: # some rules are only opt-in
   - prohibited_super_call
   - redundant_nil_coalescing
   - unneeded_parentheses_in_closure_argument
-  - unused_import
   - xct_specific_matcher
+
+analyzer_rules:
+  - unused_import
 
 
 excluded: # paths to ignore during linting. Takes precedence over `included`.
