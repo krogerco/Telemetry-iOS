@@ -23,14 +23,14 @@
 import Foundation
 import Telemetry
 
-class AnalyticsRelay: Relay {
+final class AnalyticsRelay: Relay {
 
     func process(metroid: Metroid<AnalyticsEvent>) {
         print(String(describing: type(of: self)), metroid.value)
     }
 }
 
-class CatchAllRelay: Relay {
+final class CatchAllRelay: Relay {
 
     func process(metroid: Metroid<Metron>) {
         print(type(of: metroid.value))

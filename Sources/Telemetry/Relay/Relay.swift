@@ -39,7 +39,7 @@ public protocol Relay: Sendable {
     func process(metroid: Metroid<MetronType>)
 }
 
-extension Relay {
+public extension Relay {
     func process(metron: Metron, with additionalFacets: [Facet], dateRecorded: Date) {
 
         guard let value = metron as? MetronType else {
