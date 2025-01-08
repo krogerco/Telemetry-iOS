@@ -24,6 +24,7 @@ import Combine
 import Telemetry
 import XCTest
 
+@MainActor
 final class PublisherRelayTestCase: XCTestCase {
     func testPublisher() throws {
         // Given
@@ -36,6 +37,7 @@ final class PublisherRelayTestCase: XCTestCase {
 
         // When
         relay.publisher(of: SomeMetron.self)
+            .receive(on: DispatchQueue.main)
             .sink { value in
                 receivedMetron = value
                 expect.fulfill()

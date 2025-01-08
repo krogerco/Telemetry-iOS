@@ -25,6 +25,7 @@ import Foundation
 import Gauntlet
 import XCTest
 
+@MainActor
 class StandardTelemeterTestCase: XCTestCase {
 
     func testInitialization() {

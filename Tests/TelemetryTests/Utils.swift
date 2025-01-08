@@ -26,6 +26,7 @@ import XCTest
 extension XCTestCase {
 
     /// Adds a work item to be invoked on the queue, then awaits until it is complete.
+    @MainActor
     func waitFor(queue: DispatchQueue, timeout: TimeInterval, function: StaticString = #function) {
 
         let expectation = expectation(description: "Expected \(queue.label) to complete in \(function).")

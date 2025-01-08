@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 `Telemetry` adheres to [Semantic Versioning](https://semver.org/).
 
+## 1.3.0
+
+### Added
+
+### Breaking Changes
+
+### Updated
+
+- Minor updates for Swift 6.
+
 ## 1.2.0
 
 ### Added
